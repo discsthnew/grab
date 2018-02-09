@@ -5,6 +5,7 @@ import re
 import os
 import urlparse
 
+from scrapy.http import Request
 
 def convert_url(response, url):
     normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)/(?P<uri>.*)')
