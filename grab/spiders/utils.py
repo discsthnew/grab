@@ -5,7 +5,6 @@ import re
 import os
 import urlparse
 
-from scrapy.http import Request
 
 def convert_url(response, url):
     normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)/(?P<uri>.*)')
@@ -43,13 +42,20 @@ def convert_url_agian(response, url):
             # css/public.css
             if not path:
                 raise ValueError('illegal url path: ', url)
-            abs_path = os.path.join(os.path.dirname(refer_path), path)
-            return urlparse.urlunparse((refer_schema, refer_netloc, abs_path, params, query, fragment))
+            # urljoin('http://example.com/', '../css/a.css') retrun 'http://exmaple.com/../css/a.css
+            # that would be wrong, so let's remove `..` after 'http://exmaple.com/`
+            # Notice:
+            #    use urljoin() method will lose it's query str.
+            tmp_url = urlparse.urljoin(response.request.url, path)
+            tmp_url_with_right_path = re.sub(r'\.\./', '', tmp_url, count=1)
+            tmp_url_patterns = urlparse.urlparse(tmp_url_with_right_path)
+            real_url = urlparse.urlunparse((refer_schema, refer_netloc, tmp_url_patterns[2], params, query, fragment))
+            return real_url
         else:
             return urlparse.urlunparse((refer_schema, netloc, path, params, query, fragment))
     else:
-        if schema not in ['http', 'https']:
-            raise ValueError('illegal url schema: ', url)
+        # if schema not in ['http', 'https']:
+        #     raise ValueError('illegal url schema: ', url)
         return url
 
 
@@ -66,18 +72,19 @@ def filter_url_list(allow_domain, urls, visited_urls):
     normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)/(?P<uri>.*)')
     new_urls = set()
     for url in urls:
+        if visited_urls:
+            if url in visited_urls:
+                continue
         m = normal_url.match(url)
         # if not m:
         #     raise ValueError('Illegal url:', url)
         if not m:
-            print 'Illegal url: ', url
+            if isinstance(url, str):
+                print 'Illegal url: ', url
             continue
         host = m.groupdict()['host'].split(':')[0]
         base_domain = '.'.join(host.split('.')[-2:])
         if base_domain in allow_domain:
-            if visited_urls:
-                if url in visited_urls:
-                    continue
             new_urls.add(url)
     return new_urls
 

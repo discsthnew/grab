@@ -7,5 +7,7 @@
 
 
 class GrabPipeline(object):
+    def __init__(self):
+
     def process_item(self, item, spider):
         return item
