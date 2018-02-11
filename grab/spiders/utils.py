@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-__author__ = 'walker'
+__author__ = 'discsthnew'
 
 import re
 import os
@@ -7,22 +7,6 @@ import urlparse
 
 
 def convert_url(response, url):
-    normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)/(?P<uri>.*)')
-    relative_path_url = re.compile(r'[^http].*/+.*')
-
-    if normal_url.match(url, re.I):
-        return url
-
-    if relative_path_url.match(url, re.I):
-        refer_url = response.request.url
-        m = normal_url.match(refer_url)
-        if not m:
-            raise ValueError('error refer_url:', refer_url)
-        host = m.groupdict()['host']
-        path = os.path.dirname()
-
-
-def convert_url_agian(response, url):
     """
 
     :param response: scrapy Response obj
@@ -59,17 +43,17 @@ def convert_url_agian(response, url):
         return url
 
 
-def filter_url_list(allow_domain, urls, visited_urls):
-    """
+def filter_url_list(allow_domains, urls, visited_urls):
+    """ filter url list
 
-    :param allow_domain: set
+    :param allow_domains: set
     :param urls: list
     :param visited_urls: list
     :return: new_urls: list
 
     filter url in urls which host not in allowd_domain set and has been added into visited_urls list.
     """
-    normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)/(?P<uri>.*)')
+    normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)(?P<uri>.*)')
     new_urls = set()
     for url in urls:
         if visited_urls:
@@ -82,9 +66,11 @@ def filter_url_list(allow_domain, urls, visited_urls):
             if isinstance(url, str):
                 print 'Illegal url: ', url
             continue
+        # the host may perform as `domain:port`, such as 'example.com:8080'.
         host = m.groupdict()['host'].split(':')[0]
+        # host = urlparse.urlparse(url)[1]
         base_domain = '.'.join(host.split('.')[-2:])
-        if base_domain in allow_domain:
+        if base_domain in allow_domains:
             new_urls.add(url)
     return new_urls
 

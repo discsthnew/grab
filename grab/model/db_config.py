@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# author: walker
+# author: discsthnew
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

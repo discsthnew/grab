@@ -22,7 +22,20 @@ NEWSPIDER_MODULE = 'grab.spiders'
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 16
+
+# Increase Twisted IO thread pool maximum size
+REACTOR_THREADPOOL_MAXSIZE = 20
+
+# LOG level
+LOG_LEVEL = 'DEBUG'
+
+# disable retries
+RETRY_ENABLED = False
+
+# reduce download timeout
+DOWNLOAD_TIMEOUT = 15
+DOWNLOAD_FAIL_ON_DATALOSS = False
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -99,7 +112,7 @@ ITEM_PIPELINES = {
 MYSQL = {
    'user': 'root',
    'password': 'hello123',
-   'host': '192.168.1.111',
+   'host': '172.16.6.249',
    'port': '3306',
    'db': 'test'
 }
