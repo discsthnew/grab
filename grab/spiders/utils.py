@@ -53,7 +53,7 @@ def filter_url_list(allow_domains, urls, visited_urls):
 
     filter url in urls which host not in allowd_domain set and has been added into visited_urls list.
     """
-    normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)(?P<uri>.*)')
+    normal_url = re.compile(r'(?P<schema>http|https)://(?P<host>[^/]+)(?P<uri>[^:])')
     new_urls = set()
     for url in urls:
         if visited_urls:
@@ -69,10 +69,33 @@ def filter_url_list(allow_domains, urls, visited_urls):
         # the host may perform as `domain:port`, such as 'example.com:8080'.
         host = m.groupdict()['host'].split(':')[0]
         # host = urlparse.urlparse(url)[1]
-        base_domain = '.'.join(host.split('.')[-2:])
-        if base_domain in allow_domains:
+        # base_domain = '.'.join(host.split('.')[-2:])
+        if filter_domain(allow_domains, host):
             new_urls.add(url)
     return new_urls
+
+
+def filter_domain(allow_domains, host):
+    # ['www', 'google', 'com'] --> ['com', 'google', 'www']
+    host_domain_list = host.split('.')
+    host_domain_list.reverse()
+    for domain in allow_domains:
+        status = True
+        root_domain_list = domain.split('.')
+        root_domain_list.reverse()
+        if len(host_domain_list) < len(root_domain_list):
+            continue
+        for i in range(len(root_domain_list)):
+            if host_domain_list[i] != root_domain_list[i]:
+                status = False
+                break
+        if status:
+            return True
+    return False
+
+
+
+
 
 
 
