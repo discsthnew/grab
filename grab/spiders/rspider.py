@@ -34,31 +34,37 @@ class ResourceSpider(scrapy.Spider):
     # cookies = {'cdntoken': 'a76dc7539a1fcc09063a2b5cf606ea54', 'cdnrand': '6be3a36229f65e1568d0641cd6a2cb2d'}
 
     def parse(self, response):
+        headers = response.headers
         # record item
         if response.url not in visited_urls:
             visited_urls.add(response.url)
+
+        cache_control = headers['Cache-Control'] if headers.has_key('Cache-Control') else ''
 
         if response.request.method == 'HEAD':
             try:
                 yield Resource(
                     url=response.url,
-                    content_type=response.headers['Content-Type'],
-                    content_length=int(response.headers['Content-Length']),
+                    content_type=headers['Content-Type'],
+                    content_length=int(headers['Content-Length']),
+                    cache_control=cache_control,
                     host=urlparse.urlparse(response.url)[1]
                 )
             except KeyError, e:
                 print response.url+' error: ' + str(e)
 
         elif response.request.method == 'GET':
-            if response.headers.has_key('Content-Length'):
-                length = response.header['Content-Length']
-            else:
-                length = len(response.body)
+            # if headers.has_key('Content-Length'):
+            #     length = headers['Content-Length']
+            # else:
+            #     length = len(response.body)
+            length = headers['Content-Length'] if headers.has_key('Content-Length') else len(response.body)
             try:
                 yield Resource(
                     url=response.url,
                     content_type=response.headers['Content-Type'].split(';')[0],
                     content_length=length,
+                    cache_control=cache_control,
                     host=urlparse.urlparse(response.url)[1]
                 )
             except KeyError, e:

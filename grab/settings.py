@@ -22,7 +22,7 @@ NEWSPIDER_MODULE = 'grab.spiders'
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 16
+CONCURRENT_REQUESTS = 100
 
 # Increase Twisted IO thread pool maximum size
 REACTOR_THREADPOOL_MAXSIZE = 20
@@ -34,13 +34,13 @@ LOG_LEVEL = 'DEBUG'
 RETRY_ENABLED = False
 
 # reduce download timeout
-DOWNLOAD_TIMEOUT = 15
+DOWNLOAD_TIMEOUT = 10
 DOWNLOAD_FAIL_ON_DATALOSS = False
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 0.7
+DOWNLOAD_DELAY = 0.2
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16

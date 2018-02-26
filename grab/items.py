@@ -19,5 +19,6 @@ class Resource(scrapy.Item):
     content_type = scrapy.Field()
     content_length = scrapy.Field()
     # type = scrapy.Field()
+    cache_control = scrapy.Field()
     host = scrapy.Field()
 

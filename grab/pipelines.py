@@ -18,6 +18,7 @@ class GrabPipeline(object):
             url=item['url'],
             content_type=item['content_type'],
             content_length=item['content_length'],
+            cache_control=item['cache_control'],
             host=item['host']
         )
 
