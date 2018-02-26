@@ -10,7 +10,7 @@ Statistics website resource size distribution. mainly use scrapy and sqlalchemy.
 
 # Configuration
 ## db
-open `grab/settings.py`, go to the last line and you will found a dict name `MYSQL`. take the place of your own confiugration.
+open `grab/settings.py`, go to the last line and you will found a dict obj named `MYSQL`. take the place of your own confiugration.
 ```
 #MYSQL CONNECTOR
 
